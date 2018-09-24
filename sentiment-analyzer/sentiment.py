@@ -19,18 +19,15 @@ def convert_to_one_hot(Y, C):
 def good_or_bad(y):
     if y[0] == 1:
         return 'Bad'
-    else: 
+    else:
         return 'Good'
 
 x = []
 y = []
-for line in open('amazon_cells_labelled.txt').readlines():
-    line = line.strip().split('\t')
-    x.append(line[0])
-    y.append(int(line[1]))
-
-x = np.array(x)
-y = np.array(y)
+train_data = [line.strip().split('\t') for line in open('amazon_cells_labelled.txt').readlines()]
+train_data = np.array(train_data)
+x = train_data[:, 0]
+y = train_data[:, 1].astype(np.uint8)
 
 x_train, y_train = x[:950], convert_to_one_hot(y[:950].reshape((950, 1)), C = 2)
 x_test,  y_test  = x[950:], convert_to_one_hot(y[950:].reshape((50, 1)), C = 2)
@@ -62,9 +59,9 @@ word_to_index, index_to_word, word_to_vec_map = read_glove_vecs('glove.6B.50d.tx
 
 
 def sentences_to_indices(X, word_to_index, max_len):
-    m = X.shape[0]                                   
+    m = X.shape[0]
     X_indices = np.zeros((m, max_len))
-    for i in range(m):                               
+    for i in range(m):
         sentence_words = X[i].lower().split()
         j = 0
         for w in sentence_words:
@@ -78,8 +75,8 @@ def sentences_to_indices(X, word_to_index, max_len):
     return X_indices
 
 def pretrained_embedding_layer(word_to_vec_map, word_to_index):
-    vocab_len = len(word_to_index) + 1                  
-    emb_dim = word_to_vec_map["cucumber"].shape[0]      
+    vocab_len = len(word_to_index) + 1
+    emb_dim = word_to_vec_map["cucumber"].shape[0]
     emb_matrix = np.zeros((vocab_len, emb_dim))
     for word, index in word_to_index.items():
         emb_matrix[index, :] = word_to_vec_map[word]
