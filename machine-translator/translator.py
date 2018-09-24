@@ -1,45 +1,22 @@
 # Machine Translation
-from pickle import load
 from pickle import dump
 from numpy.random import rand
 from numpy.random import shuffle
-from keras.preprocessing.text import Tokenizer
 from keras.utils import to_categorical
-from keras.preprocessing.sequence import pad_sequences
 from keras.models import Sequential, load_model
 from keras.layers import Dense, LSTM, RepeatVector, TimeDistributed
 from keras.layers import Embedding
 from keras.utils import plot_model
 from keras.callbacks import ModelCheckpoint
+from utils import *
 import numpy as np
 
-
-# load a clean dataset
-def load_clean_sentences(filename):
-    return load(open(filename, 'rb'))
 
 # load datasets
 dataset = load_clean_sentences('english-german-both.pkl')
 train = load_clean_sentences('english-german-train.pkl')
 test = load_clean_sentences('english-german-test.pkl')
 
-# fit a tokenizer
-def create_tokenizer(lines):
-	tokenizer = Tokenizer()
-	tokenizer.fit_on_texts(lines)
-	return tokenizer
-
-# max sentence length
-def max_length(lines):
-	return max(len(line.split()) for line in lines)
-
-# encode and pad sequences
-def encode_sequences(tokenizer, length, lines):
-	# integer encode sequences
-	X = tokenizer.texts_to_sequences(lines)
-	# pad sequences with 0 values
-	X = pad_sequences(X, maxlen=length, padding='post')
-	return X
 
 # one hot encode target sequence
 def encode_output(sequences, vocab_size):
